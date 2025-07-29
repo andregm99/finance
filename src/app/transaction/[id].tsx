@@ -11,7 +11,7 @@ import { TransactionTypes } from "@/Utils/TransactionTypes"
 
 export default function Transaction (){
     const [type,setType] = useState(TransactionTypes.Input)
-    const params= useLocalSearchParams<{id:string}>()
+    const params = useLocalSearchParams<{id:string}>()
     
     return(
     <View style={{flex:1,padding:24}}>

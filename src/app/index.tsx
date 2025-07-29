@@ -1,10 +1,20 @@
-import { View } from "react-native";
-import { router } from "expo-router";
+import {  View } from "react-native";
+import { useCallback,useState } from "react";
+import { Alert } from "react-native";
+import { StatusBar } from "react-native";
+
+import { router,useFocusEffect } from "expo-router";
+
 import { Button } from "@/Components/Button";
 import HomeHeader from "@/Components/HomeHeader";
-import {Target} from "@/Components/Target";
+import {Target,TargetProps} from "@/Components/Target";
 import { List } from "@/Components/List";
-import { StatusBar } from "react-native";
+import Loading from "@/Components/Loading";
+
+import { numberToCurrency } from "@/Utils/NumberToCurrency";//formatando moeda.
+
+import { useTargetDataBase } from "@/database/useTargetDatabase";
+
 //Aqui vai a rota inicial com o nome de Index dentro da pasta App
 
 const summary ={
@@ -13,26 +23,50 @@ const summary ={
   output:{label:"Saídas" ,value:"- R$ 800"}
 }
 
-const targets = [
-  
-  {
-    id:'1',
-    name:"Comprar uma cadeira ergonômica",
-    percentage:"75%",
-    current:"R$ 900.00",
-    target:"R$ 1.200,00"
-  },
-  {
-    id:'2',
-    name:"Comprar moto",
-    percentage:"75%",
-    current:"R$ 100.00",
-    target:"R$ 20.200,00"
-  }
-  
-]
+
 
 export default function Index (){
+    const[isFetching,setIsFetching]= useState(true)
+    const [targets,setTargets] = useState<TargetProps[]>([])
+    const targetDatabase = useTargetDataBase()
+
+
+     async function fetchTargets(): Promise<TargetProps[]> {//buscando metas no banco de dados.
+    try {
+      const response = await targetDatabase.listBySavedValue()
+      return response.map((item)=>({
+        id:String(item.id),
+        name:item.name,
+        current: numberToCurrency(item.current),
+        percentage:item.percentage.toFixed(0) + "%",
+        target:numberToCurrency(item.amount)
+      }))
+     
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível carregar as metas.')
+      console.log(error)
+      return []
+    }
+  }
+
+  async function fetchData() {
+    const targetDataPromise = fetchTargets()//chamando funções do banco
+
+   const [targetData]= await Promise.all([targetDataPromise])//Aguardando resolução de uma lista de promessas.
+   setTargets(targetData)//Exibindo metas na tela.
+   setIsFetching(false)
+  }
+
+    useFocusEffect(
+      useCallback(()=>{
+        fetchData()
+      },[])
+    )
+
+    if (isFetching) {
+      return <Loading/>
+    }
+
     return(
         <View  style={{flex:1}}>
           <StatusBar barStyle='light-content'/>
