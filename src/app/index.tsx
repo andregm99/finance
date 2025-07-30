@@ -11,7 +11,7 @@ import {Target,TargetProps} from "@/Components/Target";
 import { List } from "@/Components/List";
 import Loading from "@/Components/Loading";
 
-import { numberToCurrency } from "@/Utils/NumberToCurrency";//formatando moeda.
+import { numberToCurrency } from "@/Utils/numberToCurrency";//formatando moeda.
 
 import { useTargetDataBase } from "@/database/useTargetDatabase";
 

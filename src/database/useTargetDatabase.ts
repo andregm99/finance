@@ -15,6 +15,10 @@ export type TargetResponse = {
   updated_at: Date
 }
 
+export type TargetUpdate = TargetCreate & {
+  id:number
+}
+
 export function useTargetDataBase() {
     const database = useSQLiteContext()//obtendo conexão com o sqllite.
 
@@ -46,7 +50,8 @@ export function useTargetDataBase() {
         `)
 }//COALESCE verifica se for nulo e coloca zero caso seja.
 
-function show(id: number) {
+function show(id: number) {//buscando meta pelo id
+  //getFirstAsync retorna somente o primeiro (e único) resultado da consulta SQL
     return database.getFirstAsync<TargetResponse>(`
       SELECT
         targets.id,
@@ -62,7 +67,27 @@ function show(id: number) {
     `)
   }
 
-    return{create,listBySavedValue,show}
+ async function update(data:TargetUpdate){
+    const statement = await database.prepareAsync(`
+          UPDATE targets SET
+            name = $name,
+            amount = $amount,
+            updated_at = current_timestamp
+          WHERE id = $id
+      `)
+
+      statement.executeAsync({
+        $id: data.id,
+        $name: data.name,
+        $amount: data.amount,
+      })
+  }
+
+  async function  remove(id:number) {//runAsync permite executar sql sem esperar retorno.
+      await database.runAsync("DELETE FROM targets WHERE id = ?",id)
+  }
+
+    return{create,listBySavedValue,show,update,remove}
 }
 
 

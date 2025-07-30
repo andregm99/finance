@@ -1,4 +1,3 @@
-
 import { Alert, View } from "react-native"
 import { useCallback,useState } from "react"
 
@@ -10,11 +9,12 @@ import { Progress } from "@/Components/Progress"
 import { List } from "@/Components/List"
 import { Transaction,TransactionProps } from "@/Components/Transaction"
 import { Button } from "@/Components/Button"
+import Loading from "@/Components/Loading"
+
 import { useTargetDataBase } from "@/database/useTargetDatabase"
 
 import { TransactionTypes } from "@/Utils/TransactionTypes"
-import { numberToCurrency } from "@/Utils/NumberToCurrency"
-import Loading from "@/Components/Loading"
+import { numberToCurrency } from "@/Utils/numberToCurrency"
 
 
 const transactions: TransactionProps[] = [
@@ -90,7 +90,7 @@ export default function InProgress(){
         title={details.name}
         rightButton={{
           icon: 'edit',
-          onPress: () => {},
+          onPress: () => router.navigate(`/target?id=${params.id}`)//Indo para outra página.
         }}
       />
 
