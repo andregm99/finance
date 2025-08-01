@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "strict": true,//configuração para stack navigation.
     "paths": {
       "@/*":["./src/*"]
     }

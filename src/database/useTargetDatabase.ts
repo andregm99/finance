@@ -33,7 +33,7 @@ export function useTargetDataBase() {
         })
     }
 
-    function listBySavedValue (){
+    function listByClosestTarget (){
     return database.getAllAsync<TargetResponse>(`
             SELECT
             targets.id,
@@ -46,7 +46,7 @@ export function useTargetDataBase() {
             FROM targets
             LEFT JOIN transactions ON targets.id = transactions.target_id
             GROUP BY targets.id, targets.name, targets.amount
-            ORDER BY current DESC
+            ORDER BY percentage DESC
         `)
 }//COALESCE verifica se for nulo e coloca zero caso seja.
 
@@ -87,7 +87,7 @@ function show(id: number) {//buscando meta pelo id
       await database.runAsync("DELETE FROM targets WHERE id = ?",id)
   }
 
-    return{create,listBySavedValue,show,update,remove}
+    return{create,listByClosestTarget,show,update,remove}
 }
 
 

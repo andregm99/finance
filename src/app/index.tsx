@@ -6,7 +6,7 @@ import { StatusBar } from "react-native";
 import { router,useFocusEffect } from "expo-router";
 
 import { Button } from "@/Components/Button";
-import HomeHeader from "@/Components/HomeHeader";
+import HomeHeader, { HomeHeaderProps } from "@/Components/HomeHeader";
 import {Target,TargetProps} from "@/Components/Target";
 import { List } from "@/Components/List";
 import Loading from "@/Components/Loading";
@@ -14,26 +14,26 @@ import Loading from "@/Components/Loading";
 import { numberToCurrency } from "@/Utils/numberToCurrency";//formatando moeda.
 
 import { useTargetDataBase } from "@/database/useTargetDatabase";
+import { useTransactionsDatabase } from "@/database/useTransactionsDatabase";
 
 //Aqui vai a rota inicial com o nome de Index dentro da pasta App
 
-const summary ={
-  total: "R$ 2.680,00",
-  input:{label:"Entradas" ,value:"R$ 6.184,90"},
-  output:{label:"Saídas" ,value:"- R$ 800"}
-}
 
 
 
 export default function Index (){
-    const[isFetching,setIsFetching]= useState(true)
+    const [summary, setSummary] = useState<HomeHeaderProps>()
+    const [isFetching,setIsFetching]= useState(true)
     const [targets,setTargets] = useState<TargetProps[]>([])
+
+
     const targetDatabase = useTargetDataBase()
+    const transactionDatabase = useTransactionsDatabase()
 
 
      async function fetchTargets(): Promise<TargetProps[]> {//buscando metas no banco de dados.
     try {
-      const response = await targetDatabase.listBySavedValue()
+      const response = await targetDatabase.listByClosestTarget()
       return response.map((item)=>({
         id:String(item.id),
         name:item.name,
@@ -49,11 +49,35 @@ export default function Index (){
     }
   }
 
-  async function fetchData() {
-    const targetDataPromise = fetchTargets()//chamando funções do banco
+  async function fetchSummary(): Promise<HomeHeaderProps> {
+    try {
+      const response = await transactionDatabase.summary()
 
-   const [targetData]= await Promise.all([targetDataPromise])//Aguardando resolução de uma lista de promessas.
+      return {
+        total: numberToCurrency(response.input + response.output),
+        input: {
+          label: 'Entradas',
+          value: numberToCurrency(response.input),
+        },
+        output: {
+          label: 'Saídas',
+          value: numberToCurrency(response.output),
+        },
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível carregar o resumo.')
+      console.log(error)
+    }
+  }
+
+  async function fetchData() {
+
+   const targetDataPromise = fetchTargets()//chamando funções do banco
+    const dataSummaryPromise = fetchSummary()
+
+   const [targetData,dataSummary]= await Promise.all([targetDataPromise,dataSummaryPromise])//Aguardando resolução de uma lista de promessas.
    setTargets(targetData)//Exibindo metas na tela.
+   setSummary(dataSummary)//exibindo valor total que tenho guardado.
    setIsFetching(false)
   }
 
