@@ -3,7 +3,9 @@ Essa aplicação trata-se de uma aplicação financeira, onde é possível reali
 Para utilizar a mesma em seu emulador android ou ios, basta apenas executar os seguintes passos:
 
 1-Executar o comando git clone https://github.com/andregm99/finance.git
+---
 2-cd finance
+---
 3- executar o comando npm install.
 
 Após seguir esses passos poderá usar a aplicação com sucesso 
