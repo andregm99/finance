@@ -9,4 +9,5 @@ Para utilizar a mesma em seu emulador android ou ios, basta apenas executar os s
 Após seguir esses passos poderá usar a aplicação com sucesso 
 
 
-![Animação](https://github.com/user-attachments/assets/2f32f2fa-b425-4675-90ab-a3efbb1a3885)
+<img src="https://github.com/user-attachments/assets/2f32f2fa-b425-4675-90ab-a3efbb1a3885" width="400"/>
+
