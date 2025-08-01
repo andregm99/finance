@@ -7,6 +7,7 @@ Para utilizar a mesma em seu emulador android ou ios, basta apenas executar os s
 2-cd finance
 ---
 3- executar o comando npm install.
+---
 
 Após seguir esses passos poderá usar a aplicação com sucesso 
 
